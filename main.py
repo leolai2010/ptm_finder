@@ -1,7 +1,7 @@
 ##!/usr/bin/env python
 # Import necessary libraries
 from fastapi import FastAPI, File, UploadFile
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi.templating import Jinja2Templates
 import re
 import numpy as np
 import pandas as pd
@@ -85,17 +85,11 @@ def sequencePairing(fasta_file, tsv_file):
 
 app = FastAPI()
 
-origins = [
-    "https://leolai2010.github.io/"
-]
+templates = Jinja2Templates(directory="templates")
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+@app.get("/")
+async def index(reqest: Request):
+    return templates.TemplateResponse('index.html', context={'request':request})
 
 @app.post("/uploadFiles/")
 async def uploadFiles(fasta_upload: UploadFile = File(...), tsv_upload: UploadFile = File(...)):
