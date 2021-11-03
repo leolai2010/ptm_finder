@@ -30,12 +30,12 @@
             </div>
         </nav>
         <div id="uploadFiles">
-            <form method="POST" enctype="multipart/form-data">
-                <label for="fasta_input">Select a file:</label>
+            <form action="/uploadFiles" method="POST" enctype="multipart/form-data">
+                <label for="fasta_input">Upload FASTA File:</label>
                 <input type="file" id="fasta_input" name="fasta_input"><br><br>
-                <label for="tsv_input">Select a file:</label>
+                <label for="tsv_input">Upload Input(.tsv) File:</label>
                 <input type="file" id="tsv_input" name="tsv_input"><br><br>
-                <button onclick="sendData()">Submit</button>
+                <input type="submit" value="Submit">
             </form>
         </div>
     </div>
