@@ -1,6 +1,7 @@
 ##!/usr/bin/env python
 # Import necessary libraries
 from fastapi import FastAPI, File, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
 import re
 import numpy as np
 import pandas as pd
@@ -83,6 +84,18 @@ def sequencePairing(fasta_file, tsv_file):
         return False
 
 app = FastAPI()
+
+origins = [
+    "https://ptm-finder.herokuapp.com/"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.post("/uploadFiles/")
 async def uploadFiles(fasta_upload: UploadFile = File(...), tsv_upload: UploadFile = File(...)):
