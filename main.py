@@ -86,7 +86,7 @@ def sequencePairing(fasta_file, tsv_file):
 app = FastAPI()
 
 origins = [
-    "https://ptm-finder.herokuapp.com/"
+    "https://leolai2010.github.io/"
 ]
 
 app.add_middleware(
