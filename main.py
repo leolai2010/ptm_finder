@@ -1,12 +1,12 @@
 ##!/usr/bin/env python
 # Import necessary libraries
 from fastapi import FastAPI, File, UploadFile, Request, Form
+from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 import re
 import numpy as np
 import pandas as pd
-import time
-import os 
+import json
 
 # Function for parsing sequence in FASTA file into a Python dictionary relying on BioPython library
 def parseFASTA(fasta_file):
@@ -84,7 +84,7 @@ def sequencePairing(fasta_file, tsv_file):
         return False
 
 app = FastAPI()
-
+app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 @app.get("/")
@@ -92,12 +92,12 @@ async def index(request: Request):
     return templates.TemplateResponse('index.html', {'request': request})
 
 @app.post("/uploadFiles")
-async def uploadFiles(fasta_upload: UploadFile = File(...), tsv_upload: UploadFile = File(...)):
+async def uploadFiles(request: Request, fasta_upload: UploadFile = File(...), tsv_upload: UploadFile = File(...)):
     fasta_file = await fasta_upload.read() 
     tsv_file  = await tsv_upload.read() 
     data = sequencePairing(fasta_file, tsv_file)
     df = pd.DataFrame.from_dict({(i, j): (i, j, k) for i in data.keys() for j, k in data[i].items() }, orient='index')
     df.reset_index().drop(columns=['index'])
-    json_package = df.to_json(index=False, orient='split')
-    print(json_package)
-    return {"Working":"OK"}
+    result = df.to_json(index=False, orient='split')
+    print(result)
+    return templates.TemplateResponse('result.html', {'request': request, 'result': result})
