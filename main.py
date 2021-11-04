@@ -91,7 +91,7 @@ templates = Jinja2Templates(directory="templates")
 async def index(request: Request):
     return templates.TemplateResponse('index.html', {'request': request})
 
-@app.post("/uploadFiles/")
+@app.post("/uploadFiles")
 async def uploadFiles(fasta_upload: UploadFile = File(...), tsv_upload: UploadFile = File(...)):
     fasta_file = await fasta_upload.read() 
     tsv_file  = await tsv_upload.read() 
