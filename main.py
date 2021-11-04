@@ -88,8 +88,8 @@ app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 
 @app.get("/")
-async def index(reqest: Request):
-    return templates.TemplateResponse('index.html', context={'request':request})
+async def index(request: Request):
+    return templates.TemplateResponse('index.html', {'request': request})
 
 @app.post("/uploadFiles/")
 async def uploadFiles(fasta_upload: UploadFile = File(...), tsv_upload: UploadFile = File(...)):
