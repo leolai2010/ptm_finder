@@ -6,19 +6,87 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-    <link rel="stylesheet" href="{{ url_for('static', path='/index.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='/result.css') }}">
 </head>
 <body>
-    <div id="main" class="container-fluid">
-        <p>Result: {{ result['data'] }}</p>
+    <div id="main" class="container-fluid">        
+        <div id="logo">
+            <img class="img-fluid" src="../static/cs-logo.gif">
+        </div>
+        <div class="row row-cols-3 justify-content-center">
+            <div class="col-6">
+                <nav class="navbar navbar-expand-lg navbar-dark bg-danger bg-gradient animate__animated animate__fadeInDown">
+                    <div class="container-fluid justify-content-center">
+                        <a class="navbar-brand" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Click for a New Run" href="/">Post-Translational Modification Finder</a>
+                    </div>
+                </nav>
+            </div>
+        </div>
+        <br>
+        <div class="row row-cols-3 justify-content-center">
+            <div id="loading" class="col-auto animate__animated animate__fadeIn">
+                <div class="spinner-border text-danger loader" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+            <div id="result_table" class="col-auto animate__animated animate__fadeInUp">
+                <table class="table table-hover table-bordered">
+                    <thead>
+                        <tr class="table-danger">
+                            <th class="text-center" scope="col">Protein Name</th>
+                            <th class="text-center" scope="col">Peptide Name</th>
+                            <th class="text-center" scope="col">Modified Amino Acid Position</th>
+                        </tr>
+                    </thead>
+                    <tbody id="result">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <button id="download" type="button" class="btn btn-success animate__animated animate__fadeInUp" onclick=downloadCSV()>Download Result</button>
     </div>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script type=text/javascript>
     $(document).ready(function (){
-        var result = {{ result }};
-        result = JSON.parse(result.replace(/&quot;/g,'"'));
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        });
+        var result = {{ result | safe }};
+        parseResult(result['data'])
+        setTimeout(() => {
+            $('#loading').hide();
+            $('#result_table').show();
+            $('#download').show();
+        }, 3000);
+        setTimeout(() => {
+            $('#download').removeClass('animate__fadeInUp').addClass('animate__pulse animate__infinite	infinite');
+        }, 5000);
     });
+    function parseResult(result){
+        for(var i = 0; i < result.length; i++){
+            $('#result').append($('<tr/>').attr('id', 'p'+i));
+            for(var j = 0; j < result[i].length; j++){
+                $('#p'+i).append($('<td/>').html(result[i][j]));
+            };
+        };
+    };
+    function downloadCSV(){
+        var result = {{ result | safe }};
+        var data = result['data'];
+        let date = Date.now();
+        var csv = 'ProteinName, PeptideName, ModificationPositions\n';
+        data.forEach(row => {
+            csv += row.join(',');
+            csv += '\n';
+        });
+        var hiddenElement = document.createElement('a'); 
+        hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);  
+        hiddenElement.target = '_blank';   
+        hiddenElement.download = date+'_PTMResults.csv';  
+        hiddenElement.click();  
+    };
 </script>
 </html>

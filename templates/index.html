@@ -14,11 +14,13 @@
             <img class="img-fluid" src="../static/cs-logo.gif">
         </div>
         <div class="row row-cols-3 justify-content-center">
-            <nav class="navbar navbar-expand-lg navbar-dark bg-danger bg-gradient animate__animated animate__fadeInDown">
-                <div class="container-fluid justify-content-center">
-                    <a class="navbar-brand" href="#">Post-Translational Modification Finder</a>
-                </div>
-            </nav>
+            <div class="col-6">
+                <nav class="navbar navbar-expand-lg navbar-dark bg-danger bg-gradient animate__animated animate__fadeInDown">
+                    <div class="container-fluid justify-content-center">
+                        <a class="navbar-brand" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Click to Reset" href="/">Post-Translational Modification Finder</a>
+                    </div>
+                </nav>
+            </div>
         </div>
         <br>
         <div class="row row-cols-3 justify-content-center">
@@ -49,6 +51,10 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script type=text/javascript>
     $(document).ready(function (){
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        });
         $('#fasta_upload').on('change', function(){
             if(this.value != "" && this.value.endsWith('.fasta')){
                 $('#fasta_upload').removeClass('is-invalid').addClass('is-valid')

@@ -98,6 +98,5 @@ async def uploadFiles(request: Request, fasta_upload: UploadFile = File(...), ts
     data = sequencePairing(fasta_file, tsv_file)
     df = pd.DataFrame.from_dict({(i, j): (i, j, k) for i in data.keys() for j, k in data[i].items() }, orient='index')
     df.reset_index().drop(columns=['index'])
-    result = df.to_json(index=False, orient='split')
-    print(result)
+    result = json.loads(df.to_json(index=False, orient='split'))
     return templates.TemplateResponse('result.html', {'request': request, 'result': result})
