@@ -92,7 +92,7 @@ async def index(request: Request):
     return templates.TemplateResponse('index.html', {'request': request})
 
 @app.post("/uploadFiles")
-async def uploadFiles(token: str = Form(...), fasta_upload: UploadFile = File(...), tsv_upload: UploadFile = File(...)):
+async def uploadFiles(fasta_upload: UploadFile = File(...), tsv_upload: UploadFile = File(...), request: Request):
     fasta_file = await fasta_upload.read() 
     tsv_file  = await tsv_upload.read() 
     data = sequencePairing(fasta_file, tsv_file)
@@ -100,4 +100,4 @@ async def uploadFiles(token: str = Form(...), fasta_upload: UploadFile = File(..
     df.reset_index().drop(columns=['index'])
     json_package = df.to_json(index=False, orient='split')
     print(json_package)
-    return {"Working":"OK"}
+    return templates.TemplateResponse('index.html', {'request': request})
