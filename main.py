@@ -92,7 +92,7 @@ async def index(request: Request):
     return templates.TemplateResponse('index.html', {'request': request})
 
 @app.post("/uploadFiles")
-async def uploadFiles(fasta_upload: UploadFile = File(...), tsv_upload: UploadFile = File(...), request: Request):
+async def uploadFiles(request: Request, fasta_upload: UploadFile = File(...), tsv_upload: UploadFile = File(...)):
     fasta_file = await fasta_upload.read() 
     tsv_file  = await tsv_upload.read() 
     data = sequencePairing(fasta_file, tsv_file)
